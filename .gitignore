@@ -248,6 +248,7 @@ pip-selfcheck.json
 
 
 .env
-gpt2/
+bart/
+*.db
 
 # End of https://www.toptal.com/developers/gitignore/api/python,venv,nuxtjs,macos,linux

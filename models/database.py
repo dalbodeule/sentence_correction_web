@@ -11,6 +11,7 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )
 
+
 async def create_tables():
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
