@@ -4,6 +4,7 @@ from fastapi_utilities import repeat_at
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from starlette.config import Config
+from fastapi.middleware.cors import CORSMiddleware
 
 import router_auth
 import router_correction
@@ -14,12 +15,26 @@ from rate_limiter import limiter
 app = FastAPI()
 security = HTTPBearer()
 config = Config('.env')
+FRONTEND_URL = config('FRONTEND_URL')
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(router_auth.router)
 app.include_router(router_correction.router)
+
+
+origins = [
+    FRONTEND_URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 
 @app.on_event('startup')

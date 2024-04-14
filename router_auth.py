@@ -16,6 +16,7 @@ router = APIRouter(prefix='/login', tags=['auth'])
 config = Config('.env')
 
 SECRET_KEY = config('SECRET_KEY')
+FRONTEND_URL = config('FRONTEND_URL')
 
 google_sso = GoogleSSO(
     config.get('GOOGLE_CLIENT_ID'),
@@ -83,7 +84,7 @@ async def login_google_callback(request: Request):
 
         token = jwt.encode({"pld": Session(**userdata).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY,
                            algorithm="HS256")
-        response = RedirectResponse(url="/", status_code=302)
+        response = RedirectResponse(url=FRONTEND_URL, status_code=302)
         response.set_cookie(
             key="token", value=token, httponly=True
         )
