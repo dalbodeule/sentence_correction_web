@@ -26,7 +26,9 @@ async def create_or_update_user(vendor: str, token: str, profile: str, name: str
             user.email = email
         else:
             user = User(vendor=vendor, token=token, profile=profile, name=name, email=email)
-            await session.add(user)
+            session.add(user)
+        await session.commit()
+        await session.refresh(user)
 
         userdict = {
             "id": user.id,
@@ -36,7 +38,5 @@ async def create_or_update_user(vendor: str, token: str, profile: str, name: str
             "vendor": user.vendor,
             "token": user.token,
         }
-
-        await session.commit()
 
         return userdict
