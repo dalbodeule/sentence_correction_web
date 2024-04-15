@@ -17,6 +17,10 @@ const correction: Ref<String[]> = ref([])
 const auth = useAuthStore()
 const config = useRuntimeConfig()
 
+useHead({
+  title: '맞춤법 검사기'
+})
+
 const submit = async () => {
   console.log(content.value)
 

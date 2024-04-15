@@ -5,6 +5,10 @@ const auth = useAuthStore()
 const router = useRouter()
 const config = useRuntimeConfig()
 
+useHead({
+  title: '맞춤법 검사기 :: 로그인'
+})
+
 const methods: Array<{url: string, display: string, vendor: string}> = [
   { url: `${config.public.BACKEND_URL}/login/google`, display: 'Google로 로그인', vendor: 'google'},
 ]

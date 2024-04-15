@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
@@ -8,11 +11,19 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-      "@pinia/nuxt"
+      "@pinia/nuxt",
+      "nuxt-gtag",
+      "@nuxtjs/google-adsense"
   ],
   runtimeConfig: {
     public: {
       BACKEND_URL: process.env.BACKEND_URL ?? "http://localhost:8000"
     }
+  },
+  gtag: {
+    id: 'G-8YGDCCQEZT'
+  },
+  googleAdsense: {
+    id: 'ca-pub-2810659463174293'
   }
 })
