@@ -8,8 +8,8 @@ from konlpy.tag import Kkma
 from pydantic import BaseModel
 from starlette.requests import Request
 
-from rate_limiter import limiter
-from router_auth import Session, get_logged_user
+from backend.rate_limiter import limiter
+from backend.router_auth import Session, get_logged_user
 
 router = APIRouter(prefix='/correction', tags=['correction'])
 

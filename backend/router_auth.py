@@ -9,8 +9,8 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 from backend.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL
-from models.Blacklist import add_blacklist, find_blacklist
-from models.User import create_or_update_user
+from backend.models.Blacklist import add_blacklist, find_blacklist
+from backend.models.User import create_or_update_user
 
 router = APIRouter(prefix='/login', tags=['auth'])
 
