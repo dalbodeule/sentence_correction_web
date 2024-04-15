@@ -10,8 +10,9 @@ const user = useAuthStore()
 
 <template>
   <Header />
-  <Adsbygoogle ad-slot="2521832268" ad-format="fluid" ad-layout-key="-6t+ed+2i-1n-4w" />
+  <Adsbygoogle ad-slot="1878317511" ad-format="fluid" ad-layout-key="ef+6k-30-ac+ty" />
   <NuxtPage />
+  <Adsbygoogle ad-slot="2521832268" ad-format="fluid" ad-layout-key="-6t+ed+2i-1n-4w" />
   <Footer />
 </template>
 
