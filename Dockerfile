@@ -3,7 +3,7 @@ FROM openjdk:23-jdk-bullseye
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
-        build-essentials \
+        build-essential \
         curl \
         python3 \
         python3-pip \
