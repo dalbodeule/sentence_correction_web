@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 import torch
-from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
+from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
 from fastapi import APIRouter, Depends
 from konlpy.tag import Kkma
@@ -39,8 +39,8 @@ elif torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-tokenizer = PreTrainedTokenizerFast.from_pretrained('./bart')
-model = BartForConditionalGeneration.from_pretrained('./bart')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2')
+model = GPT2LMHeadModel.from_pretrained('./gpt2')
 model.to(device)
 print(f"[MODEL] device: {device.type}, {device.index}")
 

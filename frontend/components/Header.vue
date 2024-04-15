@@ -10,7 +10,7 @@ const auth = useAuthStore()
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <NuxtLink class="navbar-item" to="/">
-        &nbsp; 맞춤법 검사기
+        <img src="~/public/favicon.png" alt="맞춤법 검사기"/>&nbsp; 맞춤법 검사기
       </NuxtLink>
     </div>
     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" @click="show = !show">
@@ -24,7 +24,7 @@ const auth = useAuthStore()
       </div>
       <div class="navbar-end" v-if="auth.authenticated">
         <div class="navbar-item">
-          <img v-bind:src="auth.userInfo.profile" />
+          <img v-bind:src="auth.userInfo.profile" alt="user profile"/>
           <span>&nbsp; {{ auth.userInfo.name }}</span>
         </div>
         <NuxtLink class="navbar-item" to="/logout">로그아웃</NuxtLink>
@@ -35,7 +35,3 @@ const auth = useAuthStore()
     </div>
   </nav>
 </template>
-
-<style scoped>
-
-</style>
