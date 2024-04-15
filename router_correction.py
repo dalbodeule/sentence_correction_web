@@ -39,7 +39,9 @@ elif torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2', padding_side='left')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2', padding_side='left',
+    bos_token='</s>', eos_token='</s>', unk_token='<unk>',
+    pad_token='<pad>', mask_token='<mask>')
 model = GPT2LMHeadModel.from_pretrained('./gpt2')
 model.to(device)
 print(f"[MODEL] device: {device.type}, {device.index}")
@@ -84,5 +86,5 @@ def run_model(contents: List[str], batch_size=8) -> List[str]:
 @limiter.limit("60/seconds")
 async def correction(request: Request, correction: CorrectionRequest, user: Session = Depends(get_logged_user)):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(None, run_model, correction.content)
+    result = await loop.run_in_executor(None, run_model, [f"</s>{p}</s>" for p in correction.content])
     return CorrectionResponse(content=result)

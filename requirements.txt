@@ -1,0 +1,17 @@
+accelerate==0.29.2
+aiosqlite==0.20.0
+alembic==1.13.1
+fastapi==0.110.1
+fastapi-utilities==0.2.0
+konlpy==0.6.0
+numpy==1.26.4
+pydantic==2.6.4
+PyJWT==2.8.0
+python-dotenv==1.0.1
+python-jose==3.3.0
+slowapi==0.1.9
+SQLAlchemy==2.0.29
+starlette==0.37.2
+torch==2.2.2
+transformers==4.39.3
+uvicorn==0.29.0
