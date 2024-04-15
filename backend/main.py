@@ -8,8 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend import router_auth, router_correction
 from backend.config import FRONTEND_URL
 from backend.rate_limiter import limiter
-from models.Blacklist import delete_blacklist
-from models.database import create_tables
+from backend.models.Blacklist import delete_blacklist
+from backend.models.database import create_tables
 
 app = FastAPI()
 security = HTTPBearer()
