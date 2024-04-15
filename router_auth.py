@@ -17,11 +17,12 @@ config = Config('.env')
 
 SECRET_KEY = config('SECRET_KEY')
 FRONTEND_URL = config('FRONTEND_URL')
+BASE_URL = config.get('BASE_URL')
 
 google_sso = GoogleSSO(
     config.get('GOOGLE_CLIENT_ID'),
     config.get('GOOGLE_CLIENT_SECRET'),
-    f'{config.get('BASE_URL')}/login/google/callback')
+    f'{BASE_URL}/login/google/callback')
 
 
 class Session(BaseModel):
