@@ -5,23 +5,18 @@ from jose import jwt
 from datetime import datetime, timedelta
 
 from pydantic import BaseModel
-from starlette.config import Config
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
+from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL
 from models.Blacklist import add_blacklist, find_blacklist
 from models.User import create_or_update_user
 
 router = APIRouter(prefix='/login', tags=['auth'])
-config = Config('.env')
-
-SECRET_KEY = config('SECRET_KEY')
-FRONTEND_URL = config('FRONTEND_URL')
-BASE_URL = config.get('BASE_URL')
 
 google_sso = GoogleSSO(
-    config.get('GOOGLE_CLIENT_ID'),
-    config.get('GOOGLE_CLIENT_SECRET'),
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
     f'{BASE_URL}/login/google/callback')
 
 
