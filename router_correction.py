@@ -39,7 +39,7 @@ elif torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2', padding_side='left')
 model = GPT2LMHeadModel.from_pretrained('./gpt2')
 model.to(device)
 print(f"[MODEL] device: {device.type}, {device.index}")
