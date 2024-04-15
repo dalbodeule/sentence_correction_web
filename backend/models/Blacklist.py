@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import Column, Integer, String, DateTime, select
 
-from models.database import Base, AsyncSessionLocal
+from backend.models.database import Base, AsyncSessionLocal
 
 
 class Blacklist(Base):

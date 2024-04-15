@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, select
 
-from models.database import Base, AsyncSessionLocal
+from backend.models.database import Base, AsyncSessionLocal
 
 
 class User(Base):

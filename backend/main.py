@@ -5,12 +5,11 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 
-import router_auth
-import router_correction
-from config import FRONTEND_URL
+from backend import router_auth, router_correction
+from backend.config import FRONTEND_URL
+from backend.rate_limiter import limiter
 from models.Blacklist import delete_blacklist
 from models.database import create_tables
-from rate_limiter import limiter
 
 app = FastAPI()
 security = HTTPBearer()

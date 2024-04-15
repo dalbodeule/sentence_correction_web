@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL
+from backend.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL
 from models.Blacklist import add_blacklist, find_blacklist
 from models.User import create_or_update_user
 
