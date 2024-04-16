@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   const config = useRuntimeConfig()
-  const BASE_URL = config.public.BACKEND_URL
+  const BASE_URL = config.public.backendUrl
 
   const getUserMeta = async () => {
     loading.value = true
