@@ -1,6 +1,4 @@
-ARG NODE_VERSION=latest
-
-FROM node:${NODE_VERSION}-slim as base
+FROM node:slim as base
 
 ARG PORT=3000
 
