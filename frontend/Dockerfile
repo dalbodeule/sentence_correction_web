@@ -1,12 +1,29 @@
-FROM node:slim
+FROM node:slim as base
 
-RUN mkdir -p /src/nuxt-app
-WORKDIR /src/nuxt-app
-COPY . .
-RUN npm i
-RUN npm cache clean --force
+ARG PORT=3000
+
+ENV NODE_ENV=production
+
+WORKDIR /src
+
+# Build
+FROM base as build
+
+COPY --link package.json package-lock.json .
+RUN npm install --production=false
+
+COPY --link . .
+
 RUN npm run build
+RUN npm prune
 
-EXPOSE 3000
+# Run
+FROM base
 
-CMD ["npm", "run", "start"]
+ENV PORT=$PORT
+
+COPY --from=build /src/.output /src/.output
+# Optional, only needed if you rely on unbundled dependencies
+# COPY --from=build /src/node_modules /src/node_modules
+
+CMD [ "node", ".output/server/index.mjs" ]
