@@ -6,12 +6,15 @@ from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend import router_auth, router_correction
-from backend.config import FRONTEND_URL
+from backend.config import FRONTEND_URL, IS_PRODUCTION
 from backend.rate_limiter import limiter
 from backend.models.Blacklist import delete_blacklist
 from backend.models.database import create_tables
 
-app = FastAPI()
+app = FastAPI(
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc"
+)
 security = HTTPBearer()
 
 app.state.limiter = limiter
@@ -43,6 +46,11 @@ async def startup():
 @repeat_at(cron="0 0/12 * * *")
 async def blacklist_cron():
     await delete_blacklist()
+
+
+@app.get('/health')
+async def health():
+    return {'status': 'ok'}
 
 
 if __name__ == "__main__":
