@@ -23,6 +23,7 @@ const auth = useAuthStore()
       <div class="navbar-start">
       </div>
       <div class="navbar-end" v-if="auth.authenticated">
+        <NuxtLink class="navbar-item" to="/privacy">개인정보 처리방침</NuxtLink>
         <div class="navbar-item">
           <img v-bind:src="auth.userInfo.profile" alt="user profile"/>
           <span>&nbsp; {{ auth.userInfo.name }}</span>
@@ -30,6 +31,7 @@ const auth = useAuthStore()
         <NuxtLink class="navbar-item" to="/logout">로그아웃</NuxtLink>
       </div>
       <div class="navbar-end" v-else>
+        <NuxtLink class="navbar-item" to="/privacy">개인정보 처리방침</NuxtLink>
         <NuxtLink class="navbar-item" to="/login">로그인</NuxtLink>
       </div>
     </div>
