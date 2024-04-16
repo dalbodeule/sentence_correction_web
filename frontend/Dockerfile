@@ -1,7 +1,7 @@
-FROM node:slim as base
+FROM node:slim
 
-RUN mkdir -p /usr/src/nuxt-app
-WORKDIR /usr/src/nuxt-app
+RUN mkdir -p /src/nuxt-app
+WORKDIR /src/nuxt-app
 COPY . .
 RUN npm i
 RUN npm cache clean --force
