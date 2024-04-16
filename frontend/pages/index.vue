@@ -6,7 +6,8 @@ enum LOADING {
   DEFAULT = 0,
   PHRASED = 1,
   PHRASE_DONE = 2,
-  DONE = 3
+  DONE = 3,
+  ERROR = 9,
 }
 
 const content = ref("")
@@ -20,6 +21,15 @@ const config = useRuntimeConfig()
 useHead({
   title: '맞춤법 검사기'
 })
+
+function chunkArray<T>(array: T[], size: number) {
+  const chunked_arr = [];
+  for (let i = 0; i < array.length; i += size) {
+    const chunk = array.slice(i, i + size);
+    chunked_arr.push(chunk);
+  }
+  return chunked_arr;
+}
 
 const submit = async () => {
   console.log(content.value)
@@ -39,16 +49,24 @@ const submit = async () => {
     })
 
     loading.value = LOADING.PHRASE_DONE
+    const chunks = chunkArray(data.pharse, 16);
 
-    const data1: { content: string[]} = await $fetch(`${config.public.BACKEND_URL}/correction/correction`, {
-      method: 'POST',
-      credentials: 'include',
-      body: JSON.stringify({'content': data.pharse}),
-    })
+    const data1: string[][] = []
+
+    for (const chunk of chunks) {
+      const response: { content: string[] } = await $fetch(`${config.public.BACKEND_URL}/correction/correction`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({'content': chunk}),
+      });
+      data1.push(response.content)
+    }
+
 
     phrases.value = data.pharse
-    correction.value = data1.content
+    correction.value = data1.flat()
   } catch(e) {
+    loading.value = LOADING.ERROR
     throw e
   } finally {
     loading.value = LOADING.DONE
@@ -83,6 +101,7 @@ const reset = () => {
     <span class="has-text-white-bis" v-if="loading == LOADING.PHRASED">문장 분석중입니다.</span>
     <span class="has-text-white-bis" v-else-if="loading == LOADING.PHRASE_DONE">문장 분석 작업이 끝났습니다. 문장 교정까지 최대 5분 소요됩니다.</span>
     <span class="has-text-white-bis" v-else-if="loading == LOADING.DONE">분석이 완료되었습니다.</span>
+    <span class="has-text-warning" v-else-if="loading == LOADING.ERROR">분석 중 오류가 발생했습니다.</span>
   </form>
 
   <div v-for="(item, idx) in phrases" :key="idx" class="box" v-bind:class="`has-background-${(phrases[idx] == correction[idx] ? 'success' : 'info')}`">
