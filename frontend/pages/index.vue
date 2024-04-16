@@ -42,7 +42,7 @@ const submit = async () => {
 
   try {
     loading.value = LOADING.PHRASED
-    const data: { pharse: string[]} = await $fetch(`${config.public.BACKEND_URL}/correction/phrases`, {
+    const data: { pharse: string[]} = await $fetch(`${config.public.backendUrl}/correction/phrases`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify({'content': content.value.replaceAll("\n", " ")}),
@@ -54,7 +54,7 @@ const submit = async () => {
     const data1: string[][] = []
 
     for (const chunk of chunks) {
-      const response: { content: string[] } = await $fetch(`${config.public.BACKEND_URL}/correction/correction`, {
+      const response: { content: string[] } = await $fetch(`${config.public.backendUrl}/correction/correction`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({'content': chunk}),
