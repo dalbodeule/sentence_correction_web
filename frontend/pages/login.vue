@@ -10,7 +10,7 @@ useHead({
 })
 
 const methods: Array<{url: string, display: string, vendor: string}> = [
-  { url: `${config.public.BACKEND_URL}/login/google`, display: 'Google로 로그인', vendor: 'google'},
+  { url: `${config.public.backendUrl}/login/google`, display: 'Google로 로그인', vendor: 'google'},
 ]
 
 if (auth.authenticated) {

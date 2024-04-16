@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      BACKEND_URL: process.env.NUXT_BACKEND_URL ?? "http://localhost:8000"
+      backendUrl: "http://localhost:8000"
     }
   },
   gtag: {
