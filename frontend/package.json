@@ -11,13 +11,16 @@
     "start": "nuxt start"
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@nuxtjs/google-adsense": "^3.0.0",
     "@pinia/nuxt": "^0.5.1",
     "bulma": "^1.0.0",
     "nuxt": "^3.11.2",
+    "nuxt-gtag": "^2.0.5",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0",
-    "@nuxtjs/google-adsense": "^3.0.0",
-    "nuxt-gtag": "^2.0.5"
+    "vue-router": "^4.3.0"
   }
 }

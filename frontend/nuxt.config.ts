@@ -4,6 +4,9 @@
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  css: [
+    '@fortawesome/fontawesome-svg-core/styles.css'
+  ],
   app: {
     head: {
       charset: "utf-8",

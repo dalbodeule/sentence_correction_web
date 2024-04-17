@@ -63,8 +63,8 @@ const submit = async () => {
     }
 
 
-    phrases.value = data.pharse
-    correction.value = data1.flat()
+    phrases.value = data.pharse.map(s => s.trim())
+    correction.value = data1.flat().map(s => s.trim())
   } catch(e) {
     loading.value = LOADING.ERROR
     throw e

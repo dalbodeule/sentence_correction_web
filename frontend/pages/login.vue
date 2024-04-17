@@ -20,9 +20,11 @@ if (auth.authenticated) {
 
 <template>
   <div class="container">
-    <div class="box">
-      <div v-for="method in methods">
-        <a v-bind:href="method.url" class="button is-align-self-center">{{ method.display }}</a>
+    <div class="box columns is-vcentered" style="min-height: 80vh">
+      <div v-for="method in methods" class="has-text-centered column">
+        <a v-bind:href="method.url" class="button is-align-self-center">
+          <font-awesome-icon :icon="['fab', method.vendor]" />&nbsp; {{ method.display }}
+        </a>
       </div>
     </div>
   </div>
