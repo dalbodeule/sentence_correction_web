@@ -9,7 +9,6 @@ from backend import router_auth, router_correction
 from backend.config import FRONTEND_URL, IS_PRODUCTION
 from backend.rate_limiter import limiter
 from backend.models.Blacklist import delete_blacklist
-from backend.models.database import create_tables
 
 app = FastAPI(
     docs_url=None if IS_PRODUCTION else "/docs",
@@ -35,11 +34,6 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-
-
-@app.on_event('startup')
-async def startup():
-    await create_tables()
 
 
 @app.on_event('startup')
