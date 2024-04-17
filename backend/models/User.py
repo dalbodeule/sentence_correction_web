@@ -1,17 +1,8 @@
-from sqlalchemy import Column, Integer, String, select
+from datetime import datetime
 
-from backend.models.database import Base, AsyncSessionLocal
+from sqlalchemy import select
 
-
-class User(Base):
-    __tablename__ = 'users'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    vendor = Column(String, nullable=False)
-    token = Column(String, nullable=False)
-    profile = Column(String, nullable=False)
+from backend.models.database import AsyncSessionLocal, Base, User
 
 
 async def create_or_update_user(vendor: str, token: str, profile: str, name: str, email: str):
@@ -24,6 +15,7 @@ async def create_or_update_user(vendor: str, token: str, profile: str, name: str
             user.profile = profile
             user.name = name
             user.email = email
+            user.last_login = datetime.now()
         else:
             user = User(vendor=vendor, token=token, profile=profile, name=name, email=email)
             session.add(user)

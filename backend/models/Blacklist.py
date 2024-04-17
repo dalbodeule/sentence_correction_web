@@ -1,16 +1,7 @@
 from datetime import datetime, timedelta
+from sqlalchemy import select
 
-from sqlalchemy import Column, Integer, String, DateTime, select
-
-from backend.models.database import Base, AsyncSessionLocal
-
-
-class Blacklist(Base):
-    __tablename__ = 'blacklist'
-
-    id = Column(Integer, primary_key=True)
-    token = Column(String)
-    datetime = Column(DateTime)
+from backend.models.database import AsyncSessionLocal, Blacklist
 
 
 async def find_blacklist(token: str) -> bool:

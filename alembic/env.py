@@ -10,6 +10,12 @@ from alembic import context
 from backend.models.database import Base
 from backend import config as Config
 
+
+# import models
+from backend.models.User import User as UserModel
+from backend.models.Blacklist import Blacklist as BlacklistModel
+
+# end import models
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
