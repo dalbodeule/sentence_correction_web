@@ -11,7 +11,7 @@ useHead({
 
 const methods: Array<{url: string, display: string, id: string, color: string, bgcolor: string, icon: boolean}> = [
   { url: `${config.public.backendUrl}/login/google`, display: 'Google 로그인', id: 'google', icon: true, color: '#444', bgcolor: '#ffffff'},
-//  { url: `${config.public.backendUrl}/login/naver`, display: 'Naver 로그인', id: 'naver', icon: false, color: '#ffffff', bgcolor: '#03c75a'},
+  { url: `${config.public.backendUrl}/login/naver`, display: 'Naver 로그인', id: 'naver', icon: false, color: '#ffffff', bgcolor: '#03c75a'},
   { url: `${config.public.backendUrl}/login/github`, display: 'Github 로그인', id: 'github', icon: true, color: '#333', bgcolor: '#fafafa'},
 ]
 

@@ -1,5 +1,5 @@
 fastapi==0.110.1
-fastapi-sso==0.14.0
+fastapi-sso==0.14.1
 fastapi-utilities==0.2.1a0
 konlpy==0.6.0
 pydantic==2.6.4

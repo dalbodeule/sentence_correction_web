@@ -131,8 +131,7 @@ async def login_github_callback(request: Request):
 
         return response
 
-"""
-naver login errors.
+
 @router.get("/naver", include_in_schema=False)
 async def login_naver(request: Request):
     with naver_sso:
@@ -145,13 +144,12 @@ async def login_naver_callback(request: Request):
         user = await naver_sso.verify_and_process(request, params={"client_secret": NAVER_CLIENT_SECRET})
         if not user:
             raise HTTPException(status_code=401, detail="Authentication failed")
-        return user
         userdata = await create_or_update_user(
             vendor="naver",
             token=user.id,  # `user.id`는 Google에서 제공하는 사용자 ID입니다.
             profile=user.picture,  # 사용자의 프로필 이미지 URL입니다.
             name=user.display_name,
-            email=user.email
+            email=user.email or ""
         )
         exp = datetime.now() + timedelta(hours=1)
 
@@ -163,4 +161,3 @@ async def login_naver_callback(request: Request):
         )
 
         return response
-"""
