@@ -149,7 +149,7 @@ async def login_naver_callback(request: Request):
             token=user.id,  # `user.id`는 Google에서 제공하는 사용자 ID입니다.
             profile=user.picture,  # 사용자의 프로필 이미지 URL입니다.
             name=user.display_name,
-            email=user.email or ""
+            email=user.email
         )
         exp = datetime.now() + timedelta(hours=1)
 
