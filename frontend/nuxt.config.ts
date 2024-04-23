@@ -2,6 +2,8 @@
 
 
 
+import {viteCommonjs} from "@originjs/vite-plugin-commonjs";
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: [
@@ -14,9 +16,9 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-      "@pinia/nuxt",
-      "nuxt-gtag",
-      "@nuxtjs/google-adsense"
+    "@pinia/nuxt",
+    "nuxt-gtag",
+    "@nuxtjs/google-adsense"
   ],
   runtimeConfig: {
     public: {
@@ -28,5 +30,10 @@ export default defineNuxtConfig({
   },
   googleAdsense: {
     id: 'ca-pub-2810659463174293'
+  },
+  vite: {
+    plugins: [
+      viteCommonjs()
+    ]
   }
 })
