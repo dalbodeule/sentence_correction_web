@@ -3,7 +3,7 @@
 # 1. Installing the necessary dependencies
 # 2. Building the NuxtJS application
 # 3. Bundling the necessary external packages into a standalone build
-FROM node:alpine as builder
+FROM node:latest as builder
 # Use Docker Buildkit for faster build times (https://docs.docker.com/build/buildkit/)
 ENV DOCKER_BUILDKIT=1
 
@@ -31,7 +31,7 @@ RUN find libs -mindepth 2 -maxdepth 2 -name dist -o -name package.json -prune -o
 # 3. Copying the entire NuxtJS application (the .nuxt and the static folders)
 # 4. Setting container variables
 # 5. Defining the start-up command
-FROM node:alpine as runner
+FROM node:latest as runner
 # Since this is the final image, we want to build in production mode
 ENV NODE_ENV=PRODUCTION
 
