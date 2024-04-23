@@ -6,6 +6,9 @@ import {viteCommonjs} from "@originjs/vite-plugin-commonjs";
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  build: {
+    transpile: ['Diff'],
+  },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
@@ -31,15 +34,4 @@ export default defineNuxtConfig({
   googleAdsense: {
     id: 'ca-pub-2810659463174293'
   },
-  vite: {
-    plugins: [
-      viteCommonjs()
-    ],
-    build: {
-      rollupOptions: {
-        external: ['Diff', 'ts-invariant/process']
-      }
-    }
-  },
-
 })
