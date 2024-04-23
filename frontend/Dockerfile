@@ -10,7 +10,7 @@ WORKDIR /src
 FROM base as build
 
 COPY --link package.json package-lock.json ./
-RUN npm install --ignore-scripts --omit=dev
+RUN npm install --omit=dev
 
 COPY --link . .
 
