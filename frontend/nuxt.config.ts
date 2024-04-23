@@ -34,6 +34,12 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       viteCommonjs()
-    ]
-  }
+    ],
+    build: {
+      rollupOptions: {
+        external: ['Diff']
+      }
+    }
+  },
+
 })
