@@ -1,6 +1,19 @@
 <script setup lang="ts">
 useHead({
-  title: '맞춤법 검사기 :: AI 모델'
+  title: '맞춤법 검사기 :: AI 모델',
+  meta: [
+    { name: 'description', content: '맞춤법 검사기 - 사용중인 AI 모델 설명입니다.'}
+  ],
+  htmlAttrs: {
+    lang: 'ko'
+  }
+})
+useSeoMeta({
+  ogTitle: '맞춤법 검사기 :: AI 모델',
+  ogType: 'website',
+  ogSiteName: '맞춤법 검사기',
+  ogDescription: '맞춤법 검사기 - 사용중인 AI 모델 설명입니다.',
+  ogImage: '/favicon.png',
 })
 </script>
 

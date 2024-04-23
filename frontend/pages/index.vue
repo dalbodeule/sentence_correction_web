@@ -19,7 +19,20 @@ const auth = useAuthStore()
 const config = useRuntimeConfig()
 
 useHead({
-  title: '맞춤법 검사기'
+  title: '맞춤법 검사기',
+  meta: [
+    { name: 'description', content: '맞춤법 검사기 - AI 기반의 맞춤법 검사기!'}
+  ],
+  htmlAttrs: {
+    lang: 'ko'
+  }
+})
+useSeoMeta({
+  ogTitle: '맞춤법 검사기',
+  ogType: 'website',
+  ogSiteName: '맞춤법 검사기',
+  ogDescription: '맞춤법 검사기 - AI 기반의 맞춤법 검사기!',
+  ogImage: '/favicon.png',
 })
 
 function chunkArray<T>(array: T[], size: number) {

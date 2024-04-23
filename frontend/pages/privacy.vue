@@ -1,13 +1,26 @@
 <script setup lang="ts">
 useHead({
-  title: '맞춤법 검사기 :: 개인정보 처리방침'
+  title: '맞춤법 검사기 :: 개인정보 처리방침',
+  meta: [
+    { name: 'description', content: '맞춤법 검사기 - 개인정보 처리방침'}
+  ],
+  htmlAttrs: {
+    lang: 'ko'
+  }
+})
+useSeoMeta({
+  ogTitle: '맞춤법 검사기 :: 개인정보 처리방침',
+  ogType: 'website',
+  ogSiteName: '맞춤법 검사기',
+  ogDescription: '맞춤법 검사기 - 개인정보 처리방침',
+  ogImage: '/favicon.png',
 })
 </script>
 
 <template>
   <div class="box">
     <div class="content">
-      <strong>개인정보 처리방침(임시) Privacy Policy (Temporal)</strong>
+      <h1>개인정보 처리방침(임시) Privacy Policy (Temporal)</h1>
       <p>This privacy policy applies to the 맞춤법 검사기 app (hereby referred to as "Application") for mobile devices that was created by dalbodeule (hereby referred to as "Service Provider") as an Ad Supported service. This service is intended for use "AS IS".</p><br>
       <strong>Information Collection and Use</strong><p>The Application collects information when you download and use it. This information may include information such as</p>
       <ul>

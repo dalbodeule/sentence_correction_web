@@ -6,7 +6,20 @@ const router = useRouter()
 const config = useRuntimeConfig()
 
 useHead({
-  title: '맞춤법 검사기 :: 로그인'
+  title: '맞춤법 검사기 :: 로그인',
+  meta: [
+    { name: 'description', content: '맞춤법 검사기 - 로그인 페이지'}
+  ],
+  htmlAttrs: {
+    lang: 'ko'
+  }
+})
+useSeoMeta({
+  ogTitle: '맞춤법 검사기 :: 로그인',
+  ogType: 'website',
+  ogSiteName: '맞춤법 검사기',
+  ogDescription: '맞춤법 검사기 - 로그인 페이지',
+  ogImage: '/favicon.png',
 })
 
 const methods: Array<{url: string, display: string, id: string, color: string, bgcolor: string, icon: boolean}> = [
