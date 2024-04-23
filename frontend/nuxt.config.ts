@@ -7,7 +7,7 @@ import {viteCommonjs} from "@originjs/vite-plugin-commonjs";
 export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
-    transpile: ['Diff'],
+    transpile: ['diff'],
   },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'

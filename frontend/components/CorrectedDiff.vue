@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { diffChars } from "Diff"
+import { diffChars } from "diff"
 
 const props = defineProps(['origin', 'updated'])
 
