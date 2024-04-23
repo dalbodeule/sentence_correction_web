@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     ],
     build: {
       rollupOptions: {
-        external: ['Diff']
+        external: ['Diff', 'ts-invariant/process']
       }
     }
   },
