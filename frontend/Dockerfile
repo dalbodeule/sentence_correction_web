@@ -9,8 +9,8 @@ WORKDIR /src
 # Build
 FROM base as build
 
-COPY --link package.json package-lock.json .
-RUN npm install --production=false
+COPY --link package.json package-lock.json ./
+RUN npm install
 
 COPY --link . .
 
