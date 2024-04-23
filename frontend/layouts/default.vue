@@ -3,6 +3,12 @@ import { useAuthStore } from "~/stores/auth";
 
 const user = useAuthStore()
 
+useHead({
+  htmlAttrs: {
+    class: 'theme-light'
+  }
+})
+
 ;(async() => {
   await user.getUserMeta()
 })()
@@ -19,3 +25,4 @@ const user = useAuthStore()
 </template>
 
 <style src="~/node_modules/bulma/bulma.scss"></style>/
+<style src="~/node_modules/bulma/sass/themes/light.scss"></style>/
