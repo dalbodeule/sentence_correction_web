@@ -6,12 +6,13 @@ from datetime import datetime, timedelta
 
 from pydantic import BaseModel
 from starlette.requests import Request
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, Response
 
 from backend.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL, NAVER_CLIENT_ID, \
     NAVER_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 from backend.models.Blacklist import add_blacklist, find_blacklist
 from backend.models.User import create_or_update_user
+from backend.models.database import UserRole
 
 router = APIRouter(prefix='/login', tags=['auth'])
 
@@ -33,11 +34,13 @@ github_sso = GithubSSO(
     f'{BASE_URL}/login/github/callback'
 )
 
+
 class Session(BaseModel):
     name: str
     email: str
     id: int
     profile: str
+    role: int
 
 
 async def get_logged_user(cookie: str = Security(APIKeyCookie(name="token")), token: str = Security(APIKeyCookie(name="token"))) -> Session:
@@ -60,12 +63,17 @@ async def username(user: Session = Depends(get_logged_user)):
         'name': user.name,
         'email': user.email,
         'id': user.id,
-        'profile': user.profile
+        'profile': user.profile,
+        'role': user.role
     }
+
 
 @router.get('/logout')
 async def logout(token: str = Security(APIKeyCookie(name="token"))):
     await add_blacklist(token)
+
+    response = Response()
+    response.delete_cookie('token')
 
     return True
 
@@ -99,6 +107,7 @@ async def login_google_callback(request: Request):
         )
 
         return response
+
 
 @router.get("/github", include_in_schema=False)
 async def login_github(request: Request):

@@ -98,13 +98,13 @@ const reset = () => {
     <input type="reset" class="button is-delete" value="리셋" v-bind:disabled="!auth.authenticated || loading != LOADING.DONE" />
     <progress class="progress is-primary" v-if="loading == LOADING.DONE" style="margin-top: 20px;" value="100" max="100"/>
     <progress class="progress is-primary" v-else-if="loading != LOADING.DEFAULT" style="margin-top: 20px;"/>
-    <span class="has-text-white-bis" v-if="loading == LOADING.PHRASED">문장 분석중입니다.</span>
-    <span class="has-text-white-bis" v-else-if="loading == LOADING.PHRASE_DONE">문장 분석 작업이 끝났습니다. 문장 교정까지 최대 5분 소요됩니다.</span>
-    <span class="has-text-white-bis" v-else-if="loading == LOADING.DONE">분석이 완료되었습니다.</span>
-    <span class="has-text-warning" v-else-if="loading == LOADING.ERROR">분석 중 오류가 발생했습니다.</span>
+    <span v-if="loading == LOADING.PHRASED">문장 분석중입니다.</span>
+    <span v-else-if="loading == LOADING.PHRASE_DONE">문장 분석 작업이 끝났습니다. 문장 교정까지 최대 5분 소요됩니다.</span>
+    <span v-else-if="loading == LOADING.DONE">분석이 완료되었습니다.</span>
+    <span v-else-if="loading == LOADING.ERROR">분석 중 오류가 발생했습니다.</span>
   </form>
 
-  <CorrectedDiff v-for="(item, idx) in phrases" v-bind:origin="phrases[idx]" v-bind:updated="correction[idx]" v-bind:key="`diff-${idx}`"></CorrectedDiff>
+  <CorrectedDiff v-for="(item, idx) in phrases" v-bind:origin="phrases[idx]" v-bind:updated="correction[idx]" v-bind:key="`diff-${idx}`" v-bind:id="`diff-${idx}`"></CorrectedDiff>
 </template>
 
 <style scoped>

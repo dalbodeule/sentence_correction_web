@@ -1,11 +1,18 @@
 import { defineStore } from 'pinia';
 import nuxt from 'nuxt';
 
+export enum UserRole {
+  ADMIN = 2,
+  MODERATOR = 1,
+  USER = 0
+}
+
 interface IUser {
   name: string,
   email: string,
   id: number,
-  profile: string
+  profile: string,
+  role: number
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -16,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: "",
     id: 0,
     profile: '',
+    role: UserRole.USER
   })
 
   const config = useRuntimeConfig()
@@ -33,6 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
         userInfo.value.profile = response.profile
         userInfo.value.name = response.name
         userInfo.value.email = response.email
+        userInfo.value.role = response.role as UserRole
         authenticated.value = true
       } else {
         // refreshToken.value = null
@@ -42,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
         await getUserMeta()
       }
     } catch(e) {
-      userInfo.value = { id: 0, email: "", profile: "", name: "" }
+      userInfo.value = { id: 0, email: "", profile: "", name: "", role: UserRole.USER }
       authenticated.value = false
     }
   }
@@ -63,10 +72,11 @@ export const useAuthStore = defineStore('auth', () => {
         email: "",
         name: "",
         profile: '',
+        role: UserRole.USER
       }
       loading.value = false
     }
   };
 
-  return { authenticated, loading, logout, userInfo, getUserMeta }
+  return { authenticated, loading, logout, userInfo, getUserMeta, UserRole }
 });

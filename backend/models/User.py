@@ -29,6 +29,7 @@ async def create_or_update_user(vendor: str, token: str, profile: str, name: str
             "profile": user.profile,
             "vendor": user.vendor,
             "token": user.token,
+            "role": int(user.role),
         }
 
         return userdict
