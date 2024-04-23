@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 import torch
-from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
+from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
 
 from fastapi import APIRouter, Depends
 from konlpy.tag import Kkma
@@ -39,10 +39,8 @@ elif torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-tokenizer = PreTrainedTokenizerFast.from_pretrained('./gpt2', padding_side='left',
-    bos_token='</s>', eos_token='</s>', unk_token='<unk>',
-    pad_token='<pad>', mask_token='<mask>')
-model = GPT2LMHeadModel.from_pretrained('./gpt2')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./bart')
+model = BartForConditionalGeneration.from_pretrained('./bart')
 model.to(device)
 print(f"[MODEL] device: {device.type}, {device.index}")
 
@@ -67,7 +65,7 @@ def batches(items, batch_size):
 
 def run_model(contents: List[str], batch_size=8) -> List[str]:
     # 1. Tokenize and pad inputs in batches
-    batch = [tokenizer(batch, add_special_tokens=True, padding=True, truncation=True, return_tensors="pt",
+    batch = [tokenizer([f"{tokenizer.bos_token}{p}{tokenizer.eos_token}"for p in batch], add_special_tokens=True, padding=True, truncation=True, return_tensors="pt",
                        max_length=128) for batch in batches(contents, batch_size)]
 
     # 2. Initialize empty list for storing generated texts
@@ -86,5 +84,5 @@ def run_model(contents: List[str], batch_size=8) -> List[str]:
 @limiter.limit("60/seconds")
 async def correction(request: Request, correction: CorrectionRequest, user: Session = Depends(get_logged_user)):
     loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(None, run_model, [f"</s>{p}</s>" for p in correction.content])
+    result = await loop.run_in_executor(None, run_model, correction.content)
     return CorrectionResponse(content=result)

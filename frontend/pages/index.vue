@@ -104,11 +104,7 @@ const reset = () => {
     <span class="has-text-warning" v-else-if="loading == LOADING.ERROR">분석 중 오류가 발생했습니다.</span>
   </form>
 
-  <div v-for="(item, idx) in phrases" :key="idx" class="box" v-bind:class="`has-background-${(phrases[idx] == correction[idx] ? 'success' : 'info')}`">
-    <span class="has-text-white-bis">원문: </span><p class="has-text-white-bis" style="word-break: break-all;">{{ phrases[idx] }}</p>
-    <hr />
-    <span class="has-text-white-bis">교정: </span><p class="has-text-white-bis" style="word-break: break-all;">{{ correction[idx] }}</p>
-  </div>
+  <CorrectedDiff v-for="(item, idx) in phrases" v-bind:origin="phrases[idx]" v-bind:updated="correction[idx]" v-bind:key="`diff-${idx}`"></CorrectedDiff>
 </template>
 
 <style scoped>
