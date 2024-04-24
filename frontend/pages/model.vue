@@ -14,6 +14,9 @@ useSeoMeta({
   ogSiteName: '맞춤법 검사기',
   ogDescription: '맞춤법 검사기 - 사용중인 AI 모델 설명입니다.',
   ogImage: '/favicon.png',
+  robots: {
+    all: true
+  }
 })
 </script>
 

@@ -14,8 +14,11 @@ export default defineNuxtConfig({
   ],
   app: {
     head: {
-      charset: "utf-8",
-      viewport: "width=device-width, initial-scale=1"
+      meta: [
+        { name: 'charset', content: 'utf-8' },
+        { name: 'viewport', content: "width=device-width, initial-scale=1" },
+        { name: 'naver-site-verification', content: "580bdcf52bca3a7aeb0714be32c41d3b5b98436f" }
+      ]
     }
   },
   modules: [
