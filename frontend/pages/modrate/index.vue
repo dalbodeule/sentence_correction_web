@@ -9,7 +9,7 @@ useHead({
 })
 
 useSeoMeta({
-  robots: { all: false }
+  robots: { index: false }
 })
 
 ;(async() => {
