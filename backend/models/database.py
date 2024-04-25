@@ -28,6 +28,18 @@ class UserRole(enum.Enum):
         return self.value
 
 
+class DatasetStatus(enum.Enum):
+    """
+    0: Pending, 1: Approved, 2: Rejected
+    """
+    PENDING = 0
+    APPROVED = 1
+    REJECTED = 2
+
+    def __int__(self):
+        return self.value
+
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -57,4 +69,8 @@ class Dataset(Base):
     id = Column(Integer, primary_key=True)
     text = Column(String(255), nullable=False)
     corrected = Column(String(255), nullable=False)
+    memo = Column(String(255), nullable=True)
+    status = Column(Enum(DatasetStatus), nullable=False, default=DatasetStatus.PENDING)
+    created_at = Column(DateTime, nullable=False, default=datetime.now())
+    updated_at = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
     user_id = Column(Integer, ForeignKey('users.id', ondelete=None))

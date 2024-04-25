@@ -5,7 +5,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend import router_auth, router_correction
+from backend import router_auth, router_correction, router_dataset
 from backend.config import FRONTEND_URL, IS_PRODUCTION
 from backend.rate_limiter import limiter
 from backend.models.Blacklist import delete_blacklist
@@ -21,6 +21,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(router_auth.router)
 app.include_router(router_correction.router)
+app.include_router(router_dataset.router)
 
 
 origins = [
