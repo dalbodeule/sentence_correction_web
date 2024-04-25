@@ -28,6 +28,7 @@ class CorrectionResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
 class SizeResponse(BaseModel):
     size: int
     pages: int

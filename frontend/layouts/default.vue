@@ -16,6 +16,7 @@ useHead({
 
 <template>
   <Header />
+  <Notification />
   <div class="container" style="margin-top: 20px; min-height: 80vh;">
     <Adsbygoogle ad-slot="8101462005" ad-format="auto" v-bind:ad-full-width-responsive="true" />
     <NuxtPage />

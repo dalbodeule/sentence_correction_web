@@ -22,6 +22,7 @@ const auth = useAuthStore()
     <div class="navbar-menu" v-bind:class="show ? 'is-active' : ''">
       <div class="navbar-start">
         <NuxtLink class="navbar-item" to="/model">AI 모델</NuxtLink>
+        <NuxtLink class="navbar-item" to="/notification">공지사항</NuxtLink>
         <NuxtLink class="navbar-item" to="/list">규칙 제안 리스트</NuxtLink>
         <NuxtLink class="navbar-item" to="/privacy">개인정보 처리방침</NuxtLink>
       </div>

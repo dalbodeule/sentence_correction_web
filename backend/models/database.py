@@ -74,3 +74,13 @@ class Dataset(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
     user_id = Column(Integer, ForeignKey('users.id', ondelete=None))
+
+
+class Notification(Base):
+    __tablename__ = 'notification'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete=None))
+    content = Column(String(255), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.now())
+    updated_at = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
