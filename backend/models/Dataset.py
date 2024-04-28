@@ -1,4 +1,5 @@
 from sqlalchemy import select, desc, func
+from sqlalchemy.orm import joinedload
 
 from backend.models.database import AsyncSessionLocal, Dataset
 
@@ -6,7 +7,7 @@ from backend.models.database import AsyncSessionLocal, Dataset
 async def get_datasets(page_no: int, entries=50):
     async with AsyncSessionLocal() as session:
         offset = (page_no - 1) * entries
-        query = select(Dataset).order_by(desc(Dataset.created_at)).offset(offset).limit(50)
+        query = select(Dataset).options(joinedload(Dataset.user)).order_by(desc(Dataset.created_at)).offset(offset).limit(50)
         results = await session.execute(query)
 
         return results.scalars().all()

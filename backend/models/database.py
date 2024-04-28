@@ -74,6 +74,7 @@ class Dataset(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
     user_id = Column(Integer, ForeignKey('users.id', ondelete=None))
+    user = relationship("User")
 
 
 class Notification(Base):
@@ -84,3 +85,4 @@ class Notification(Base):
     content = Column(String(255), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    user = relationship("User")

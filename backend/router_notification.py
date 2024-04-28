@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.requests import Request
 from pydantic import BaseModel
 
 from backend.models.Notification import get_latest_notification as get_latest_notification_model, get_notifications, \
-    get_total_notification_count
+    get_total_notification_count, create_or_update_notification
 from backend.rate_limiter import limiter
 from backend.router_auth import Session, get_logged_user
 
@@ -19,6 +19,11 @@ class NotificationResponse(BaseModel):
     content: str
     created_at: datetime
     updated_at: datetime
+
+
+class NotificationRequest(BaseModel):
+    id: Optional[int] = 0
+    content: str
 
 
 class SizeResponse(BaseModel):
@@ -61,3 +66,16 @@ async def get_size(request: Request):
     total_size = await get_total_notification_count()
     pages = (total_size + 49) // 50
     return SizeResponse(size=total_size, pages=pages)
+
+@router.post("/create", response_model=NotificationResponse)
+@limiter.limit("5/second")
+async def create_notification(request: Request, data: NotificationRequest, user: Session = Depends(get_logged_user)):
+    results = await create_or_update_notification(data.id, data.content, user.id)
+
+    return NotificationResponse(
+        id=results.id,
+        user_id=results.user_id,
+        content=results.content,
+        created_at=results.created_at,
+        updated_at=results.updated_at
+    )

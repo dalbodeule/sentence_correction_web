@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type {Ref} from "vue";
+import {useAuthStore, UserRole} from "~/stores/auth";
+import dayjs from "dayjs";
 
 const config = useRuntimeConfig()
 
@@ -32,7 +34,11 @@ interface IDataset {
 }
 
 const route = useRoute()
+const user = useAuthStore()
 const page = ref(parseInt(<string>route.params.id) ?? 1)
+
+const notificationId = ref(0)
+const notificationContent = ref("")
 
 const maxPage = ref(0)
 const elements: Ref<IDataset[]> = ref([])
@@ -61,7 +67,35 @@ const update = async (page: number) => {
   })
 }
 
-(async() => {
+const addOrUpdate = async (id: number = 0) => {
+  if (user.userInfo.role != UserRole.ADMIN && user.userInfo.role != UserRole.MODERATOR)
+    return
+
+  const d = await $fetch(`${config.public.backendUrl}/notification/create`, {
+    method: 'POST',
+    credentials: 'include',
+    body: JSON.stringify({ id, content: notificationContent.value })
+  })
+
+  await update(1)
+}
+
+const updateSet = (id: number = 0, content: string = '') => {
+  if (user.userInfo.role != UserRole.ADMIN && user.userInfo.role != UserRole.MODERATOR)
+    return
+
+  notificationId.value = id
+  notificationContent.value = content
+}
+
+const removeNotification = (id: number = 0) => {
+  if (user.userInfo.role != UserRole.ADMIN && user.userInfo.role != UserRole.MODERATOR)
+    return
+
+}
+
+
+;(async() => {
   await update(page.value)
 })()
 </script>
@@ -80,13 +114,32 @@ const update = async (page: number) => {
       <tbody>
         <tr v-for="element in elements" :key="element.id">
           <td>{{ element.id }}</td>
-          <td>{{ element.content }}</td>
-          <td>{{ element.created_at.toISOString().replace("T", " ").substring(0, 19) }}</td>
-          <td>{{ element.updated_at.toISOString().replace("T", " ").substring(0, 19) }}</td>
+          <td>{{ element.content }}
+            <div v-if="user.userInfo.role == UserRole.ADMIN || user.userInfo.role == UserRole.MODERATOR" style="display: inline-block; float: right;">
+              <button @click="updateSet(element.id, element.content)"><font-awesome-icon :icon="['fas', 'pencil']" /></button> &nbsp;
+              <button @click="removeNotification(element.id)"><font-awesome-icon :icon="['fas', 'x']" /></button>
+            </div>
+          </td>
+          <td>{{ dayjs(element.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
+          <td>{{ dayjs(element.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
         </tr>
       </tbody>
     </table>
-    <div style="height: 5em;"/>
+    <div style="height: 5em">
+      <form class="form-control" @submit.prevent="addOrUpdate(notificationId)"  v-if="user.userInfo.role == UserRole.MODERATOR || user.userInfo.role == UserRole.ADMIN">
+        <div class="field has-addons">
+          <p class="control">
+            <button class="button" @click="updateSet()" type="button">{{ notificationId }}</button>
+          </p>
+          <div class="control is-expanded">
+            <input type="text" class="input" maxlength="250" placeholder="공지해야 할 내용을 적어주세요." v-model="notificationContent">
+          </div>
+          <div class="control">
+            <input type="submit" class="button" value="공지하기!">
+          </div>
+        </div>
+      </form>
+    </div>
     <nav class="pagination is-centered" role="pagination" aria-label="Page navigation">
       <NuxtLink v-bind:href="`/notification/${page - 1}`" :disabled="page == 1" class="pagination-previous">이전</NuxtLink>
       <NuxtLink v-bind:href="`/notification/${page + 1}`" :disabled="page - 1 == maxPage" class="pagination-next">다음</NuxtLink>

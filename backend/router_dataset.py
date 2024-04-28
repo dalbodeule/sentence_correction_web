@@ -27,6 +27,7 @@ class CorrectionResponse(BaseModel):
     status: int
     created_at: datetime
     updated_at: datetime
+    user: Session
 
 
 class SizeResponse(BaseModel):
@@ -48,6 +49,13 @@ async def list_corrections(request: Request, page_no: int) -> List[CorrectionRes
         status=int(entries.status),
         created_at=entries.created_at,
         updated_at=entries.updated_at,
+        user=Session(
+            id=entries.user.id,
+            name=entries.user.name,
+            email=entries.user.email,
+            profile=entries.user.profile,
+            role=entries.user.role
+        )
     ) for entries in results]
 
 
@@ -62,7 +70,8 @@ async def create_correction(request: Request, data: CorrectionRequest, user: Ses
         memo=data.memo,
         status=int(DatasetStatus.PENDING),
         created_at=datetime.now(),
-        updated_at=datetime.now()
+        updated_at=datetime.now(),
+        user=user
     )
 
 

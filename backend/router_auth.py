@@ -12,7 +12,6 @@ from backend.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SEC
     NAVER_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 from backend.models.Blacklist import add_blacklist, find_blacklist
 from backend.models.User import create_or_update_user
-from backend.models.database import UserRole
 
 router = APIRouter(prefix='/login', tags=['auth'])
 

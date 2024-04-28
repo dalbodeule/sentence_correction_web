@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {Ref} from "vue";
+import dayjs from "dayjs";
 
 const config = useRuntimeConfig()
 
@@ -99,8 +100,8 @@ const update = async (page: number) => {
           <td v-if="element.status == DatasetStatus.APPROVED" class="is-primary">규칙 승인</td>
           <td v-else-if="element.status == DatasetStatus.REJECTED" class="is-warning">규칙 거부</td>
           <td v-else class="is-info">대기중</td>
-          <td>{{ element.created_at.toISOString().replace("T", " ").substring(0, 19) }}</td>
-          <td>{{ element.updated_at.toISOString().replace("T", " ").substring(0, 19) }}</td>
+          <td>{{ dayjs(element.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
+          <td>{{ dayjs(element.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
         </tr>
       </tbody>
     </table>
