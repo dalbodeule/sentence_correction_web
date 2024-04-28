@@ -1,13 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
-
-
 import {viteCommonjs} from "@originjs/vite-plugin-commonjs";
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
-    transpile: ['diff'],
+    transpile: ['diff', 'Dayjs'],
   },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'
