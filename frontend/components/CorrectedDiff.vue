@@ -4,10 +4,11 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import type {Ref} from "vue";
 
 const props = defineProps<{origin: string, updated: string, id: string, nth: number, isLastElement: boolean}>()
-const emit = defineEmits<{update: [idx: number, value: string]}>()
+const emit = defineEmits<{update: [idx: number, value: string], post: [idx: number, origin: string, fixed: string]}>()
 
 const diffParts: Ref<Change[]> = ref([])
 const hasDiff = ref(false)
+const originText = ref("")
 const updatedText = ref("")
 const fixedText = ref("")
 const update = ref(false)
@@ -15,12 +16,18 @@ const update = ref(false)
 const runDiff = (origin: string, updated: string) => {
   diffParts.value = diffChars(origin, updated)
   hasDiff.value = diffParts.value.some(part => part.added || part.removed)
-  updatedText.value = updated
-  fixedText.value = updated
+  originText.value = origin
+  updatedText.value = fixedText.value = updated
 }
 
 const emitUpdate = () => {
-  emit('update', props.nth, updatedText.value)
+  emit('update', props.nth, fixedText.value)
+  runDiff(updatedText.value.trim(), fixedText.value.trim())
+}
+
+const emitPost = () => {
+  emit('post', props.nth, originText.value.trim(), fixedText.value.trim())
+  update.value = false
   runDiff(updatedText.value.trim(), fixedText.value.trim())
 }
 
@@ -49,7 +56,9 @@ runDiff(`${props.origin}`, `${props.updated}`)
           <button class="button is-primary" style="margin-left: 5px;" @click="update = !update; emitUpdate()" v-else>
             <font-awesome-icon :icon="['fas', 'check']" />
           </button>
-          <button class="button is-warning" disabled style="margin-left: 5px" v-if="update"><font-awesome-icon :icon="['fas', 'comments']" /></button>
+          <button class="button is-warning" style="margin-left: 5px" v-if="update" @click="update = !update; emitPost()" :disabled="!hasDiff">
+            <font-awesome-icon :icon="['fas', 'comments']" />
+          </button>
         </div>
       </div>
     </div>

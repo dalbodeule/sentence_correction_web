@@ -86,9 +86,9 @@ const update = async (page: number) => {
           <th>원 문장</th>
           <th>교정 문장</th>
           <th>메모</th>
-          <th>상태</th>
-          <th>생성일</th>
-          <th>업데이트</th>
+          <th style="width: 5em;">상태</th>
+          <th style="width: 8em;">생성일</th>
+          <th style="width: 8em;">업데이트</th>
         </tr>
       </thead>
       <tbody>
@@ -97,8 +97,8 @@ const update = async (page: number) => {
           <td>{{ element.text }}</td>
           <td>{{ element.correction }}</td>
           <td>{{ element.memo }}</td>
-          <td v-if="element.status == DatasetStatus.APPROVED" class="is-primary">규칙 승인</td>
-          <td v-else-if="element.status == DatasetStatus.REJECTED" class="is-warning">규칙 거부</td>
+          <td v-if="element.status == DatasetStatus.APPROVED" class="is-primary">승인</td>
+          <td v-else-if="element.status == DatasetStatus.REJECTED" class="is-warning">거부</td>
           <td v-else class="is-info">대기중</td>
           <td>{{ dayjs(element.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
           <td>{{ dayjs(element.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</td>

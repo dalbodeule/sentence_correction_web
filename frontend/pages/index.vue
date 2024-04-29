@@ -8,15 +8,23 @@ enum LOADING {
   PHRASE_DONE = 2,
   DONE = 3,
   RESULT = 4,
+  LOADING = 5,
   ERROR = 9,
 }
 
 const content = ref("")
 const loading = ref(LOADING.DEFAULT)
 
+const postModal = ref(false)
+const originText = ref("")
+const fixedText = ref("")
+const memo = ref("")
+const postLoading = ref(LOADING.DEFAULT)
+
 const phrases: Ref<string[]> = ref([])
 const correction: Ref<string[]> = ref([])
 const result: Ref<string[]> = ref([])
+
 const auth = useAuthStore()
 const config = useRuntimeConfig()
 
@@ -99,6 +107,29 @@ const showResult = () => {
   loading.value = LOADING.RESULT
 }
 
+const modalResult = (idx: number, origin: string, fixed: string) => {
+  postLoading.value = LOADING.DEFAULT
+  postModal.value = true
+  originText.value = origin
+  fixedText.value = fixed
+}
+
+const postResult = async () => {
+  postLoading.value = LOADING.LOADING
+  try {
+    const data: { id: number } = await $fetch(`${config.public.backendUrl}/dataset/create`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({text: originText.value, correction: fixedText.value, memo: memo.value}),
+      })
+
+    postLoading.value = LOADING.DONE
+    setTimeout(() => { postModal.value = false }, 3000)
+  } catch(e) {
+    postLoading.value = LOADING.ERROR
+  }
+}
+
 const reset = () => {
   content.value = ""
   phrases.value = []
@@ -122,7 +153,7 @@ const reset = () => {
     </div>
     <input type="submit" class="button is-primary" value="검사하기" v-bind:disabled="!auth.authenticated || loading != LOADING.DEFAULT && loading != LOADING.RESULT" />
     <span>&nbsp; </span>
-    <button type="button" class="button is-success" v-bind:disabled="!auth.authenticated || loading != LOADING.DONE" @click="showResult()">결과보기</button>
+    <button type="button" class="button is-success" v-bind:disabled="!auth.authenticated || loading != LOADING.DONE  && loading != LOADING.RESULT" @click="showResult()">결과보기</button>
     <span>&nbsp; </span>
     <input type="reset" class="button is-delete" value="리셋" v-bind:disabled="!auth.authenticated || loading != LOADING.DONE && loading != LOADING.RESULT" />
     <hr>
@@ -139,8 +170,55 @@ const reset = () => {
   <CorrectedDiff v-for="(item, idx) in phrases"
       v-bind:origin="phrases[idx]" v-bind:updated="correction[idx]" v-bind:key="`diff-${idx}`" id="diff"
       v-bind:nth="idx" v-bind:is-last-element="idx == phrases.length - 1"
-      @update="updateResult"
+      @update="updateResult" @post="modalResult"
   />
+
+  <div class="modal" v-bind:class="postModal ? 'is-active' : ''">
+    <div class="modal-background"></div>
+    <form class="modal-card" @submit.prevent="postResult">
+      <div class="modal-card-head">
+        <p class="modal-card-title">규칙 제안하기</p>
+        <button class="delete" type="button" aria-label="close" @click="postModal = false"></button>
+      </div>
+      <section class="modal-card-body">
+        <p class="title">제안할 내용을 확인해주세요!</p>
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <tr>
+              <th style="width: 4em;">구분</th>
+              <th>내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>원본</td>
+              <td>{{ originText }}</td>
+            </tr>
+            <tr>
+              <td>수정</td>
+              <td>{{ fixedText }}</td>
+            </tr>
+            <tr>
+              <td>메모</td>
+              <td><input class="input" type="text" v-model="memo" maxlength="250"></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="notification is-success" v-if="postLoading == LOADING.DONE">
+          규칙 제공에 성공했습니다.
+        </div>
+        <div class="notification is-warning" v-else-if="postLoading == LOADING.ERROR">
+          규칙 제공에 실패했습니다.
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons">
+          <button class="button is-success" type="submit" :disabled="postLoading == LOADING.LOADING">제안하기</button>
+          <button class="button" @click="postModal=false" type="button" :disabled="postLoading == LOADING.LOADING">취소</button>
+        </div>
+      </footer>
+    </form>
+  </div>
 
 </template>
 
