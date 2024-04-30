@@ -6,12 +6,12 @@ from datetime import datetime, timedelta
 
 from pydantic import BaseModel
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import RedirectResponse, Response, JSONResponse
 
 from backend.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, SECRET_KEY, FRONTEND_URL, NAVER_CLIENT_ID, \
-    NAVER_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
+    NAVER_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.models.Blacklist import add_blacklist, find_blacklist
-from backend.models.User import create_or_update_user
+from backend.models.User import create_or_update_user, get_user
 
 router = APIRouter(prefix='/login', tags=['auth'])
 
@@ -42,6 +42,10 @@ class Session(BaseModel):
     role: int
 
 
+def get_exp():
+    return datetime.now() + timedelta(hours=ACCESS_TOKEN_EXPIRE_MINUTES)
+
+
 async def get_logged_user(cookie: str = Security(APIKeyCookie(name="token")), token: str = Security(APIKeyCookie(name="token"))) -> Session:
     """Get user's JWT stored in cookie 'token', parse it and return the user's OpenID."""
     try:
@@ -65,6 +69,30 @@ async def username(user: Session = Depends(get_logged_user)):
         'profile': user.profile,
         'role': user.role
     }
+
+
+@router.get('/refresh')
+async def refresh(user: Session = Depends(get_logged_user)):
+    userdata = await get_user(user.id)
+    exp = get_exp()
+    token = jwt.encode({"pld": Session(
+        id=userdata.id,
+        name=userdata.name,
+        email=userdata.email,
+        profile=userdata.profile,
+        role=userdata.role,
+    ).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY, algorithm="HS256")
+
+    response = JSONResponse({
+        'name': userdata.name,
+        'email': userdata.email,
+        'id': userdata.id,
+        'profile': userdata.profile,
+        'role': userdata.role
+    })
+    response.set_cookie(key='token', value=token, httponly=True)
+
+    return response
 
 
 @router.get('/logout')
@@ -96,7 +124,7 @@ async def login_google_callback(request: Request):
             name=user.display_name,
             email=user.email
         )
-        exp = datetime.now() + timedelta(hours=1)
+        exp = get_exp()
 
         token = jwt.encode({"pld": Session(**userdata).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY,
                            algorithm="HS256")
@@ -128,7 +156,7 @@ async def login_github_callback(request: Request):
             name=user.display_name,
             email=user.email
         )
-        exp = datetime.now() + timedelta(hours=1)
+        exp = get_exp()
 
         token = jwt.encode({"pld": Session(**userdata).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY,
                            algorithm="HS256")
@@ -159,7 +187,7 @@ async def login_naver_callback(request: Request):
             name=user.display_name,
             email=user.email
         )
-        exp = datetime.now() + timedelta(hours=1)
+        exp = get_exp()
 
         token = jwt.encode({"pld": Session(**userdata).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY,
                            algorithm="HS256")

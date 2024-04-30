@@ -2,8 +2,12 @@
 import { useAuthStore, UserRole } from "~/stores/auth";
 
 const show = ref(false)
-
 const auth = useAuthStore()
+const route = useRoute()
+
+watch(() => route.path, async() => {
+  await auth.refreshToken()
+})
 </script>
 
 <template>

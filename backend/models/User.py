@@ -33,3 +33,13 @@ async def create_or_update_user(vendor: str, token: str, profile: str, name: str
         }
 
         return userdict
+
+
+async def get_user(id: int):
+    async with AsyncSessionLocal() as session:
+        query = select(User).filter_by(id=id)
+        result = await session.execute(query)
+        user = result.scalars().first()
+
+        if user:
+            return user

@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
-import nuxt from 'nuxt';
 
 export enum UserRole {
   ADMIN = 2,
   MODERATOR = 1,
   USER = 0
 }
+
+const _15MIN = 15 * 60 * 1000;
 
 interface IUser {
   name: string,
@@ -23,7 +24,8 @@ export const useAuthStore = defineStore('auth', () => {
     email: "",
     id: 0,
     profile: '',
-    role: UserRole.USER
+    role: UserRole.USER,
+    lastUpdate: new Date()
   })
 
   const config = useRuntimeConfig()
@@ -37,21 +39,31 @@ export const useAuthStore = defineStore('auth', () => {
         credentials: 'include',
       })
       if (response) {
-        userInfo.value.id = response.id
-        userInfo.value.profile = response.profile
-        userInfo.value.name = response.name
-        userInfo.value.email = response.email
-        userInfo.value.role = response.role as UserRole
+        userInfo.value = {
+          id: response.id,
+          profile: response.profile,
+          name: response.name,
+          email: response.email,
+          role: response.role as UserRole,
+          lastUpdate: new Date(),
+        }
         authenticated.value = true
       } else {
         // refreshToken.value = null
         authenticated.value = false
+        userInfo.value = {
+          name: "",
+          email: "",
+          id: 0,
+          profile: '',
+          role: UserRole.USER,
+          lastUpdate: new Date()
+        }
 
-        // await refresh()
         await getUserMeta()
       }
     } catch(e) {
-      userInfo.value = { id: 0, email: "", profile: "", name: "", role: UserRole.USER }
+      userInfo.value = { id: 0, email: "", profile: "", name: "", role: UserRole.USER, lastUpdate: new Date() }
       authenticated.value = false
     }
   }
@@ -72,11 +84,47 @@ export const useAuthStore = defineStore('auth', () => {
         email: "",
         name: "",
         profile: '',
-        role: UserRole.USER
+        role: UserRole.USER,
+        lastUpdate: new Date()
       }
       loading.value = false
     }
   };
 
-  return { authenticated, loading, logout, userInfo, getUserMeta, UserRole }
+  const refreshToken = async () => {
+    if (userInfo.value.lastUpdate.getTime() + _15MIN > new Date().getTime())
+      return
+    if (!authenticated) return
+
+    loading.value = true
+    try {
+      const response: IUser = await $fetch(`${BASE_URL}/login/refresh`, {
+        method: "GET",
+        credentials: 'include',
+      })
+      userInfo.value = {
+        id: response.id,
+        profile: response.profile,
+        name: response.name,
+        email: response.email,
+        role: response.role as UserRole,
+        lastUpdate: new Date(),
+      }
+      authenticated.value = true
+    } catch(e) {
+      authenticated.value = false
+      userInfo.value = {
+        id: 0,
+        email: "",
+        name: "",
+        profile: '',
+        role: UserRole.USER,
+        lastUpdate: new Date()
+      }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { authenticated, loading, logout, userInfo, getUserMeta, UserRole, refreshToken }
 });
