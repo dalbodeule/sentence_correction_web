@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import type {Ref} from "vue";
 import dayjs from "dayjs";
+import {useAuthStore} from "~/stores/auth";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {DatasetStatus, LOADING} from "~/common/enum";
 
 const config = useRuntimeConfig()
+const user = useAuthStore()
 
 useHead({
   title: '맞춤법 검사기 :: 규칙 제안 리스트',
@@ -24,12 +28,6 @@ useSeoMeta({
   }
 })
 
-enum DatasetStatus {
-  PENDING = 0,
-  APPROVED = 1,
-  REJECTED = 2,
-}
-
 interface IDataset{
     id: number
     text: string
@@ -45,6 +43,12 @@ const page = ref(parseInt(<string>route.params.id) ?? 1)
 
 const maxPage = ref(0)
 const elements: Ref<IDataset[]> = ref([])
+
+const modModal = ref(false)
+const modIdx = ref(0)
+const modStatus = ref(DatasetStatus.PENDING)
+const modLoadingStatus = ref(LOADING.DEFAULT)
+const modMemo = ref("")
 
 const update = async (page: number) => {
   const p: {size: number, pages: number} = await $fetch(`${config.public.backendUrl}/dataset/size`, {
@@ -72,6 +76,38 @@ const update = async (page: number) => {
   })
 }
 
+const showModModal = (idx: number) => {
+  modModal.value = true
+  modIdx.value = idx
+
+  const data = elements.value.find((item) => item.id === idx)
+
+  modStatus.value = data!!.status
+  modMemo.value = data!!.memo
+}
+
+const setStatus = async () => {
+  if(user.userInfo.role != UserRole.ADMIN && user.userInfo.role != UserRole.MODERATOR) return
+
+  modLoadingStatus.value = LOADING.LOADING
+
+  try {
+    const q: { id: number }[] =
+      await $fetch(`${config.public.backendUrl}/dataset/setstatus`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({id: modIdx.value, status: modStatus.value, memo: modMemo.value}),
+      })
+    modLoadingStatus.value = LOADING.DONE
+
+    setTimeout(async () => { modModal.value = false }, 3000)
+    await update(page.value)
+  } catch(e) {
+    console.log(e)
+    modLoadingStatus.value = LOADING.ERROR
+  }
+}
+
 (async() => {
   await update(page.value)
 })()
@@ -86,7 +122,7 @@ const update = async (page: number) => {
           <th>원 문장</th>
           <th>교정 문장</th>
           <th>메모</th>
-          <th style="width: 5em;">상태</th>
+          <th style="width: 6em;">상태</th>
           <th style="width: 8em;">생성일</th>
           <th style="width: 8em;">업데이트</th>
         </tr>
@@ -97,9 +133,15 @@ const update = async (page: number) => {
           <td>{{ element.text }}</td>
           <td>{{ element.correction }}</td>
           <td>{{ element.memo }}</td>
-          <td v-if="element.status == DatasetStatus.APPROVED" class="is-primary">승인</td>
-          <td v-else-if="element.status == DatasetStatus.REJECTED" class="is-warning">거부</td>
-          <td v-else class="is-info">대기중</td>
+          <td v-if="element.status == DatasetStatus.APPROVED" class="is-primary" @click="showModModal(element.id)">
+            승인 <font-awesome-icon :icon="['fas', 'pencil']" v-if="user.userInfo.role == UserRole.ADMIN || user.userInfo.role == UserRole.MODERATOR" />
+          </td>
+          <td v-else-if="element.status == DatasetStatus.REJECTED" class="is-warning" @click="showModModal(element.id)">
+            거부 <font-awesome-icon :icon="['fas', 'pencil']" v-if="user.userInfo.role == UserRole.ADMIN || user.userInfo.role == UserRole.MODERATOR" />
+          </td>
+          <td v-else class="is-info" @click="showModModal(element.id)">
+            대기중 <font-awesome-icon :icon="['fas', 'pencil']" v-if="user.userInfo.role == UserRole.ADMIN || user.userInfo.role == UserRole.MODERATOR" />
+          </td>
           <td>{{ dayjs(element.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
           <td>{{ dayjs(element.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
         </tr>
@@ -133,6 +175,65 @@ const update = async (page: number) => {
         </li>
       </ul>
     </nav>
+  </div>
+
+  <div class="modal" v-bind:class="modModal ? 'is-active' : ''">
+    <div class="modal-background"></div>
+    <form class="modal-card" @submit.prevent="setStatus">
+      <div class="modal-card-head">
+        <p class="modal-card-title">제안 수정하기</p>
+        <button class="delete" type="button" aria-label="close" @click="modModal = false"></button>
+      </div>
+      <section class="modal-card-body">
+        <p class="title">제안 수정 내용을 확인해주세요!</p>
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <tr>
+              <th style="width: 4em;">구분</th>
+              <th>내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ID</td>
+              <td>{{ modIdx }}</td>
+            </tr>
+            <tr>
+              <td>상태</td>
+              <td>
+                <div class="buttons has-addons">
+                  <button class="button is-info" :class="modStatus == DatasetStatus.PENDING ? 'is-active' : ''" @click="modStatus = DatasetStatus.PENDING" type="button">
+                    대기중
+                  </button>
+                  <button class="button is-primary" :class="modStatus == DatasetStatus.APPROVED ? 'is-active' : ''" @click="modStatus = DatasetStatus.APPROVED" type="button">
+                    승인
+                  </button>
+                  <button class="button is-warning" :class="modStatus == DatasetStatus.REJECTED ? 'is-active' : ''" @click="modStatus = DatasetStatus.REJECTED" type="button">
+                    거부
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>메모</td>
+              <td><input class="input" type="text" v-model="modMemo" maxlength="250"></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="notification is-success" v-if="modLoadingStatus == LOADING.DONE">
+          제안 수정에 성공했습니다.
+        </div>
+        <div class="notification is-warning" v-else-if="modLoadingStatus == LOADING.ERROR">
+          제안 수정에 실패했습니다.
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons">
+          <button class="button is-success" type="submit" :disabled="modLoadingStatus == LOADING.LOADING">수정하기</button>
+          <button class="button" @click="modModal=false" type="button" :disabled="modLoadingStatus == LOADING.LOADING">취소</button>
+        </div>
+      </footer>
+    </form>
   </div>
 </template>
 

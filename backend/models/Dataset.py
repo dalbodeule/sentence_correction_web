@@ -1,7 +1,7 @@
 from sqlalchemy import select, desc, func
 from sqlalchemy.orm import joinedload
 
-from backend.models.database import AsyncSessionLocal, Dataset
+from backend.models.database import AsyncSessionLocal, Dataset, DatasetStatus
 
 
 async def get_datasets(page_no: int, entries=50):
@@ -19,6 +19,24 @@ async def create_dataset(uid: int, text: str, corrected: str, memo: str):
         await session.commit()
 
         return True
+
+
+async def update_dataset(id: int, status: DatasetStatus, memo: str):
+    async with AsyncSessionLocal() as session:
+        query = select(Dataset).options(joinedload(Dataset.user)).filter_by(id=id)
+        results = await session.execute(query)
+        result = results.scalar()
+
+        if result is None:
+            raise Exception("Dataset not found")
+
+        result.status = status
+        result.memo = memo
+
+        await session.commit()
+        await session.refresh(result)
+
+        return result
 
 
 async def get_total_datasets_count() -> int:

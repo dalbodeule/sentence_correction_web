@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette.requests import Request
 from pydantic import BaseModel
 
-from backend.models.Dataset import get_datasets, create_dataset, get_total_datasets_count
-from backend.models.database import DatasetStatus
+from backend.models.Dataset import get_datasets, create_dataset, get_total_datasets_count, update_dataset
+from backend.models.database import DatasetStatus, UserRole
 from backend.rate_limiter import limiter
 from backend.router_auth import Session, get_logged_user
 
@@ -18,6 +18,11 @@ class CorrectionRequest(BaseModel):
     correction: str
     memo: str
 
+
+class CorrectionStatusRequest(BaseModel):
+    id: int
+    status: DatasetStatus
+    memo: str
 
 class CorrectionResponse(BaseModel):
     id: int
@@ -72,6 +77,31 @@ async def create_correction(request: Request, data: CorrectionRequest, user: Ses
         created_at=datetime.now(),
         updated_at=datetime.now(),
         user=user
+    )
+
+
+@router.post("/setstatus", response_model=CorrectionResponse)
+@limiter.limit("5/second")
+async def create_correction(request: Request, data: CorrectionStatusRequest, user: Session = Depends(get_logged_user)):
+    if user.role == UserRole.USER:
+        raise HTTPException(status_code=403, detail="Only Admin or Moderator can modding Corrections")
+
+    row = await update_dataset(data.id, data.status, data.memo)
+    return CorrectionResponse(
+        id=row.id,
+        text=row.text,
+        correction=row.corrected,
+        memo=row.memo,
+        status=int(row.status),
+        created_at=row.created_at,
+        updated_at=row.updated_at,
+        user=Session(
+            id=row.user.id,
+            name=row.user.name,
+            email=row.user.email,
+            profile=row.user.profile,
+            role=row.user.role
+        )
     )
 
 

@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import {useAuthStore} from "~/stores/auth";
 import type {Ref} from "vue";
-
-enum LOADING {
-  DEFAULT = 0,
-  PHRASED = 1,
-  PHRASE_DONE = 2,
-  DONE = 3,
-  RESULT = 4,
-  LOADING = 5,
-  ERROR = 9,
-}
+import {LOADING} from "~/common/enum";
 
 const content = ref("")
 const loading = ref(LOADING.DEFAULT)

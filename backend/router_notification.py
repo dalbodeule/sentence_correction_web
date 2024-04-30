@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from backend.models.Notification import get_latest_notification as get_latest_notification_model, get_notifications, \
     get_total_notification_count, create_or_update_notification
+from backend.models.database import UserRole
 from backend.rate_limiter import limiter
 from backend.router_auth import Session, get_logged_user
 
@@ -67,9 +68,12 @@ async def get_size(request: Request):
     pages = (total_size + 49) // 50
     return SizeResponse(size=total_size, pages=pages)
 
+
 @router.post("/create", response_model=NotificationResponse)
 @limiter.limit("5/second")
 async def create_notification(request: Request, data: NotificationRequest, user: Session = Depends(get_logged_user)):
+    if user.role == UserRole.USER:
+        raise HTTPException(status_code=403, detail="Only Admin or Moderator can create notifications")
     results = await create_or_update_notification(data.id, data.content, user.id)
 
     return NotificationResponse(
