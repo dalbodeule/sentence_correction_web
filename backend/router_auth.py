@@ -72,7 +72,7 @@ async def username(user: Session = Depends(get_logged_user)):
 
 
 @router.get('/refresh')
-async def refresh(token: str = Security(APIKeyCookie(name='token')), user: Session = Depends(get_logged_user)):
+async def refresh(old_token: str = Security(APIKeyCookie(name='token')), user: Session = Depends(get_logged_user)):
     userdata = await get_user(user.id)
     exp = get_exp()
     token = jwt.encode({"pld": Session(
@@ -83,7 +83,7 @@ async def refresh(token: str = Security(APIKeyCookie(name='token')), user: Sessi
         role=userdata.role,
     ).__dict__, "exp": exp, "sub": user.email}, key=SECRET_KEY, algorithm="HS256")
 
-    await add_blacklist(token)
+    await add_blacklist(old_token)
 
     response = JSONResponse({
         'name': userdata.name,
