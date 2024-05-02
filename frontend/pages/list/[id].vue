@@ -77,6 +77,8 @@ const update = async (page: number) => {
 }
 
 const showModModal = (idx: number) => {
+  if(user.userInfo.role != UserRole.ADMIN && user.userInfo.role != UserRole.MODERATOR) return
+
   modModal.value = true
   modIdx.value = idx
 
