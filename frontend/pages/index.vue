@@ -2,6 +2,7 @@
 import {useAuthStore} from "~/stores/auth";
 import type {Ref} from "vue";
 import {LOADING} from "~/common/enum";
+import useGoogleRecaptcha from "~/composables/useGoogleRecaptcha";
 
 const content = ref("")
 const loading = ref(LOADING.DEFAULT)
@@ -18,6 +19,8 @@ const result: Ref<string[]> = ref([])
 
 const auth = useAuthStore()
 const config = useRuntimeConfig()
+
+const { executeRecaptcha } = useGoogleRecaptcha()
 
 useHead({
   title: '맞춤법 검사기',
@@ -108,10 +111,21 @@ const modalResult = (idx: number, origin: string, fixed: string) => {
 const postResult = async () => {
   postLoading.value = LOADING.LOADING
   try {
+    const { token } = await executeRecaptcha('proposeRule')
+    if(!token) {
+      postLoading.value = LOADING.ERROR
+      return
+    }
+
     const data: { id: number } = await $fetch(`${config.public.backendUrl}/dataset/create`, {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({text: originText.value, correction: fixedText.value, memo: memo.value}),
+        body: JSON.stringify({
+          text: originText.value,
+          correction: fixedText.value,
+          memo: memo.value,
+          recaptcha_response: token
+        }),
       })
 
     postLoading.value = LOADING.DONE

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from backend.models.Dataset import get_datasets, create_dataset, get_total_datasets_count, update_dataset
 from backend.models.database import DatasetStatus, UserRole
 from backend.rate_limiter import limiter
+from backend.recaptcha_handler import recaptcha_handler
 from backend.router_auth import Session, get_logged_user
 
 router = APIRouter(prefix="/dataset", tags=["dataset"])
@@ -17,12 +18,17 @@ class CorrectionRequest(BaseModel):
     text: str
     correction: str
     memo: str
+    recaptcha_response: str
 
 
 class CorrectionStatusRequest(BaseModel):
     id: int
     status: DatasetStatus
+    text: str
+    correction: str
     memo: str
+    recaptcha_response: str
+
 
 class CorrectionResponse(BaseModel):
     id: int
@@ -67,6 +73,8 @@ async def list_corrections(request: Request, page_no: int) -> List[CorrectionRes
 @router.post("/create", response_model=CorrectionResponse)
 @limiter.limit("5/second")
 async def create_correction(request: Request, data: CorrectionRequest, user: Session = Depends(get_logged_user)):
+    await recaptcha_handler(data.recaptcha_response)
+
     await create_dataset(user.id, data.text, data.correction, data.memo)
     return CorrectionResponse(
         id=0,
@@ -82,11 +90,12 @@ async def create_correction(request: Request, data: CorrectionRequest, user: Ses
 
 @router.post("/setstatus", response_model=CorrectionResponse)
 @limiter.limit("5/second")
-async def create_correction(request: Request, data: CorrectionStatusRequest, user: Session = Depends(get_logged_user)):
+async def modify_status(request: Request, data: CorrectionStatusRequest, user: Session = Depends(get_logged_user)):
     if user.role == UserRole.USER:
         raise HTTPException(status_code=403, detail="Only Admin or Moderator can modding Corrections")
+    await recaptcha_handler(data.recaptcha_response)
 
-    row = await update_dataset(data.id, data.status, data.memo)
+    row = await update_dataset(data.id, data.status, data.text, data.correction, data.memo)
     return CorrectionResponse(
         id=row.id,
         text=row.text,

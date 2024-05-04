@@ -21,11 +21,12 @@ export default defineNuxtConfig({
   modules: [
     "@pinia/nuxt",
     "nuxt-gtag",
-    "@nuxtjs/google-adsense"
+    "@nuxtjs/google-adsense",
   ],
   runtimeConfig: {
     public: {
-      backendUrl: process.env.NUXT_BACKEND_URL ?? "http://localhost:8000"
+      backendUrl: process.env.NUXT_BACKEND_URL ?? "http://localhost:8000",
+      recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY
     }
   },
   gtag: {
@@ -33,5 +34,5 @@ export default defineNuxtConfig({
   },
   googleAdsense: {
     id: 'ca-pub-2810659463174293'
-  },
+  }
 })

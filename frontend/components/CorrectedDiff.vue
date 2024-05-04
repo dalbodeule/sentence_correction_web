@@ -22,11 +22,11 @@ const runDiff = (origin: string, updated: string) => {
 
 const emitUpdate = () => {
   emit('update', props.nth, fixedText.value)
-  runDiff(updatedText.value.trim(), fixedText.value.trim())
+  runDiff(updatedText.value.trim(), updatedText.value.trim())
 }
 
 const emitPost = () => {
-  emit('post', props.nth, originText.value.trim(), fixedText.value.trim())
+  emit('post', props.nth, updatedText.value.trim(), fixedText.value.trim())
   update.value = false
   runDiff(updatedText.value.trim(), fixedText.value.trim())
 }

@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import {useAuthStore} from "~/stores/auth";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {DatasetStatus, LOADING} from "~/common/enum";
+import useGoogleRecaptcha from "~/composables/useGoogleRecaptcha";
 
 const config = useRuntimeConfig()
 const user = useAuthStore()
@@ -49,6 +50,10 @@ const modIdx = ref(0)
 const modStatus = ref(DatasetStatus.PENDING)
 const modLoadingStatus = ref(LOADING.DEFAULT)
 const modMemo = ref("")
+const modText = ref("")
+const modCorrected = ref("")
+
+const { executeRecaptcha } = useGoogleRecaptcha()
 
 const update = async (page: number) => {
   const p: {size: number, pages: number} = await $fetch(`${config.public.backendUrl}/dataset/size`, {
@@ -84,6 +89,8 @@ const showModModal = (idx: number) => {
 
   const data = elements.value.find((item) => item.id === idx)
 
+  modText.value = data!!.text
+  modCorrected.value = data!!.correction
   modStatus.value = data!!.status
   modMemo.value = data!!.memo
 }
@@ -94,11 +101,24 @@ const setStatus = async () => {
   modLoadingStatus.value = LOADING.LOADING
 
   try {
+    const { token } = await executeRecaptcha('proposeRule')
+    if(!token) {
+      modLoadingStatus.value = LOADING.ERROR
+      return
+    }
+
     const q: { id: number }[] =
       await $fetch(`${config.public.backendUrl}/dataset/setstatus`, {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({id: modIdx.value, status: modStatus.value, memo: modMemo.value}),
+        body: JSON.stringify({
+          id: modIdx.value,
+          status: modStatus.value,
+          memo: modMemo.value,
+          text: modText.value,
+          correction: modCorrected.value,
+          recaptcha_response: token
+        }),
       })
     modLoadingStatus.value = LOADING.DONE
 
@@ -199,6 +219,14 @@ const setStatus = async () => {
             <tr>
               <td>ID</td>
               <td>{{ modIdx }}</td>
+            </tr>
+            <tr>
+              <td>원 문장</td>
+              <td><input class="input" type="text" v-model="modText" maxlength="250"></td>
+            </tr>
+            <tr>
+              <td>교정 문장</td>
+              <td><input class="input" type="text" v-model="modCorrected" maxlength="250"></td>
             </tr>
             <tr>
               <td>상태</td>

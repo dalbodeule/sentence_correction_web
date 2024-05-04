@@ -21,7 +21,7 @@ async def create_dataset(uid: int, text: str, corrected: str, memo: str):
         return True
 
 
-async def update_dataset(id: int, status: DatasetStatus, memo: str):
+async def update_dataset(id: int, status: DatasetStatus, text: str, corrected: str, memo: str):
     async with AsyncSessionLocal() as session:
         query = select(Dataset).options(joinedload(Dataset.user)).filter_by(id=id)
         results = await session.execute(query)
