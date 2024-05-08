@@ -26,11 +26,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       backendUrl: process.env.NUXT_BACKEND_URL ?? "http://localhost:8000",
-      recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY
+      recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
     }
   },
   gtag: {
-    id: 'G-8YGDCCQEZT'
+    id: 'G-J6X1FYLC1Y'
   },
   googleAdsense: {
     id: 'ca-pub-2810659463174293'
